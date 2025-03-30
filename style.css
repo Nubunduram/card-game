@@ -1,0 +1,70 @@
+* {
+    color: inherit;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    display: grid;
+    place-items: center;
+    gap: 32px;
+    margin: 32px;
+
+    background-color: #1e812e;
+    color: white;
+}
+
+.square .card.hidden {
+    background-color: #a94a2f;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #a94a2f;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #c0392b;
+}
+
+#game-board {
+    display: flex;
+    gap: 30px;
+}
+
+.square {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 8px;
+}
+
+.square .card, button {
+    cursor: pointer;
+}
+
+.card {
+    width: 60px;
+    height: 80px;
+    display: grid;
+    place-content: center;
+    border: 1px solid #000;
+    background-color: white;
+    border-radius: 7px;
+    color: black;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/*  */
+
+.red {
+    color: red;
+}
+
+/* Style pour les cartes sélectionnées */
+.card.selected {
+    border: 2px solid #ffb600;
+    background-color: #ffe600;
+}
