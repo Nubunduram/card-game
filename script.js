@@ -33,11 +33,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Démarrer la partie
     function startGame() {
+        // Reset values
+        phase = 1;
+        revealedCount = [0, 0, 0];
+        revealedCountPhase3 = 0;
+        selectedVisibleCard = null;
+        selectedHiddenCard = null;
+
+        // Clear UI
+        gameBoard.innerHTML = "";
+        visibleCardContainer.innerHTML = "";
+        reglesDuJeu.textContent = "";
+
+        // Reset deck and distribute cards
         generateDeck();
         distributeCards();
+
+        // Render the new board
         renderBoard();
+
+        // Start phase 1
         startPhase1();
     }
+
 
     // Distribuer les cartes : 1 carte visible + 3 carrés de 9 cartes cachées
     function distributeCards() {
@@ -158,6 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Sélectionner une carte pour l'échange (phase 2)
     function selectCard(squareIndex, cardIndex, element) {
         if (phase !== 2) return; // Ne permettre de sélectionner que pendant la phase 2
+
         const card = boardSquares[squareIndex][cardIndex];
 
         const allCards = gameBoard.querySelectorAll(".card");
@@ -181,31 +200,28 @@ document.addEventListener("DOMContentLoaded", () => {
             element.classList.add("selected");
             reglesDuJeu.textContent = "Carte face cachée sélectionnée. Cliquez sur 'Passer à la phase 3' pour échanger.";
         }
-
-        // Si deux cartes sont sélectionnées, afficher le bouton pour passer à la phase 3
-        if (selectedVisibleCard && selectedHiddenCard) {
-            nextPhaseButton.style.display = "inline-block";
-        }
     }
 
     // Démarrer la phase 1
     function startPhase1() {
         phase = 1;
         revealedCount = [0, 0, 0]; // Réinitialiser le nombre de cartes révélées
-        reglesDuJeu.textContent = "Phase 1 : Révélez jusqu'à 3 cartes dans chaque carré.";
+        reglesDuJeu.textContent = "Phase 1 : Retournez 3 cartes dans chaque carré.";
         nextPhaseButton.style.display = "none"; // Cacher le bouton de passage à la phase 3 pendant la phase 1
     }
 
     // Démarrer la phase 2
     function startPhase2() {
+        nextPhaseButton.style.display = "inline-block";
         phase = 2;
-        reglesDuJeu.textContent = "Phase 2 : Sélectionnez une carte visible et une carte cachée pour échanger.";
-        nextPhaseButton.style.display = "none"; // Cacher le bouton de passage à la phase 3 pendant la phase 2
+        reglesDuJeu.textContent = "Phase 2 (optionnel) : Sélectionnez une carte visible et une carte cachée pour échanger leurs positions.";
         renderBoard(); // Re-rendre le tableau pour réinitialiser les événements et l'affichage
     }
 
     // Passer à la phase suivante (Phase 3)
     function startPhase3() {
+        nextPhaseButton.style.display = "none"; // Cacher le bouton de passage à la phase 3 pendant la phase 2
+
         if (selectedVisibleCard && selectedHiddenCard) {
             // Si les cartes ont été sélectionnées, échanger les cartes sélectionnées
             const { squareIndex: visibleSquare, cardIndex: visibleIndex } = selectedVisibleCard;
