@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             deck.splice(0, 9),
             deck.splice(0, 9)
         ];
-        
+
     }
 
     // Afficher la carte visible et les 3 carrés de 3x3 cartes cachées
@@ -233,26 +233,28 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkResults() {
         let totalPoints = 0;
 
-        // Vérification des lignes horizontales
-        for (let i = 0; i < 3; i++) {
-            const row = boardSquares[i];  // This should correctly get each row
-            totalPoints += checkLine(row);
-        }
-        
+        // récupère chaques ligne à vérifier
+        boardSquares.forEach(square => {
+            const row1 = [square[0], square[1], square[2]];
+            const row2 = [square[3], square[4], square[5]];
+            const row3 = [square[6], square[7], square[8]];
 
-        // Vérification des lignes verticales
-        for (let i = 0; i < 3; i++) {
-            const column = [boardSquares[0][i], boardSquares[1][i], boardSquares[2][i]];
-            totalPoints += checkLine(column);
-        }
-        
+            const column1 = [square[0], square[3], square[6]];
+            const column2 = [square[1], square[4], square[7]];
+            const column3 = [square[2], square[5], square[8]];
 
-        // Vérification des diagonales
-        const diagonal1 = [boardSquares[0][0], boardSquares[1][1], boardSquares[2][2]];
-        const diagonal2 = [boardSquares[0][2], boardSquares[1][1], boardSquares[2][0]];
-        totalPoints += checkLine(diagonal1);
-        totalPoints += checkLine(diagonal2);
-        
+            const diagonal1 = [square[0], square[4], square[8]];
+            const diagonal2 = [square[2], square[4], square[6]];
+
+            totalPoints += checkLine(row1);
+            totalPoints += checkLine(row2);
+            totalPoints += checkLine(row3);
+            totalPoints += checkLine(column1);
+            totalPoints += checkLine(column2);
+            totalPoints += checkLine(column3);
+            totalPoints += checkLine(diagonal1);
+            totalPoints += checkLine(diagonal2);
+        });
 
         // Affichage du résultat
         if (totalPoints > 0) {
@@ -275,14 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let points = 0;
 
-        // Vérifier si toutes les cartes sont de la même couleur (red ou black)
-        if (new Set(colors).size === 1) {
-            points += 1; // 1 point si toutes les cartes sont de la même couleur
-        }
+
 
         // Vérifier si toutes les cartes ont le même type (même enseigne)
         if (new Set(suits).size === 1) {
             points += 3; // 3 points si toutes les cartes sont du même type (même enseigne)
+        } else if (new Set(colors).size === 1) {
+            points += 1; // 1 point si toutes les cartes sont de la même couleur
         }
 
         // Vérifier si toutes les cartes ont le même numéro
@@ -338,8 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(checkLine(testLine7) + " should be 0"); // Debug this manually
 
     }
-    test();
-
+    test()
     // Démarrer le jeu
     startButton.addEventListener("click", startGame);
 
