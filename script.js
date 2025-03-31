@@ -31,6 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return array.sort(() => Math.random() - 0.5);
     }
 
+    // Distribuer les cartes : 1 carte visible + 3 carrés de 9 cartes cachées
+    function distributeCards() {
+        visibleCard = deck.pop();
+        boardSquares = [
+            deck.splice(0, 9),
+            deck.splice(0, 9),
+            deck.splice(0, 9)
+        ];
+
+    }
+
     // Démarrer la partie
     function startGame() {
         // Reset values
@@ -54,18 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Start phase 1
         startPhase1();
-    }
-
-
-    // Distribuer les cartes : 1 carte visible + 3 carrés de 9 cartes cachées
-    function distributeCards() {
-        visibleCard = deck.pop();
-        boardSquares = [
-            deck.splice(0, 9),
-            deck.splice(0, 9),
-            deck.splice(0, 9)
-        ];
-
     }
 
     // Afficher la carte visible et les 3 carrés de 3x3 cartes cachées
@@ -240,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         phase = 3;
-        reglesDuJeu.textContent = "Phase 3 : Découvrez 3 nouvelles cartes.";
+        reglesDuJeu.textContent = " Découvrez 3 nouvelles cartes.";
         nextPhaseButton.style.display = "none"; // Cacher le bouton pour passer à la phase 3
         renderBoard();
     }
@@ -249,66 +248,37 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkResults() {
         let totalPoints = 0;
 
-        // récupère chaques ligne à vérifier
         boardSquares.forEach(square => {
-            const row1 = [square[0], square[1], square[2]];
-            const row2 = [square[3], square[4], square[5]];
-            const row3 = [square[6], square[7], square[8]];
+            const lines = [
+                // Lignes
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                // Colonnes
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                // Diagonales
+                [0, 4, 8], [2, 4, 6]
+            ];
 
-            const column1 = [square[0], square[3], square[6]];
-            const column2 = [square[1], square[4], square[7]];
-            const column3 = [square[2], square[5], square[8]];
-
-            const diagonal1 = [square[0], square[4], square[8]];
-            const diagonal2 = [square[2], square[4], square[6]];
-
-            totalPoints += checkLine(row1);
-            totalPoints += checkLine(row2);
-            totalPoints += checkLine(row3);
-            totalPoints += checkLine(column1);
-            totalPoints += checkLine(column2);
-            totalPoints += checkLine(column3);
-            totalPoints += checkLine(diagonal1);
-            totalPoints += checkLine(diagonal2);
+            totalPoints += lines.reduce((sum, indices) => sum + checkLine(indices.map(i => square[i])), 0);
         });
 
         // Affichage du résultat
-        if (totalPoints > 0) {
-            reglesDuJeu.textContent = `Vous avez gagné avec ${totalPoints} points !`;
-        } else {
-            reglesDuJeu.textContent = "Aucune ligne valide, vous avez perdu.";
-        }
+        reglesDuJeu.textContent = totalPoints > 0
+            ? `Vous avez gagné avec ${totalPoints} points !`
+            : "Aucune ligne valide, vous avez perdu.";
     }
 
     // Fonction pour vérifier une ligne (horizontale, verticale, ou diagonale)
     function checkLine(cards) {
-        const colors = cards.map(card => card.color); // Récupère les couleurs
-        const numbers = cards.map(card => card.number); // Récupère les numéros
-        const suits = cards.map(card => card.suit); // Récupère les enseignes
+        if (cards.some(card => !card.revealed)) return 0; // Ne pas compter si une carte est cachée
 
-        // Vérifier si toutes les cartes sont révélées
-        if (cards.some(card => !card.revealed)) {
-            return 0; // Ne pas compter si une carte est cachée
-        }
+        const [colors, numbers, suits] = ['color', 'number', 'suit'].map(attr => new Set(cards.map(card => card[attr])));
 
-        let points = 0;
-
-
-
-        // Vérifier si toutes les cartes ont le même type (même enseigne)
-        if (new Set(suits).size === 1) {
-            points += 3; // 3 points si toutes les cartes sont du même type (même enseigne)
-        } else if (new Set(colors).size === 1) {
-            points += 1; // 1 point si toutes les cartes sont de la même couleur
-        }
-
-        // Vérifier si toutes les cartes ont le même numéro
-        if (new Set(numbers).size === 1) {
-            points += 5; // 5 points si toutes les cartes ont le même numéro
-        }
+        let points = (suits.size === 1 ? 3 : colors.size === 1 ? 1 : 0) + (numbers.size === 1 ? 5 : 0);
 
         return points;
     }
+
+
     function test() {
         const testLine1 = [
             { number: 5, suit: "♥", color: "red", revealed: true },
