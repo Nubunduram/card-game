@@ -1,12 +1,12 @@
 index.html --> Open with live server
 
 ## Les règles actuel du jeux:
-Le but c'est d'avoir le plus de points possible. </br><br>
-Pour obtenir des points il faut avoir une ligne de 3 carte révélé qui vaux un certain nombre de points.
-Ces lignes peuvent être verticale, horizontale ou diagonale.
-3 Cartes de la même couleur (rouge ou noir) === 1 point.
-3 Cartes de même types (Coeur, Carreaux, Trèfle, Pique) === 3 points.
-3 Cartes du même chiffre === 5 points.
+Le but c'est d'avoir le plus de points possible. <br>
+Pour obtenir des points il faut avoir une ligne de 3 carte révélé qui vaux un certain nombre de points.<br>
+Ces lignes peuvent être verticale, horizontale ou diagonale.<br>
+3 Cartes de la même couleur (rouge ou noir) === 1 point.<br>
+3 Cartes de même types (Coeur, Carreaux, Trèfle, Pique) === 3 points.<br>
+3 Cartes du même chiffre === 5 points.<br>
 
 ## Le jeux se passe actuellement en 3 phases:
 Phase 1:
