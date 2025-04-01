@@ -1,7 +1,7 @@
 index.html --> Open with live server
 
 ## Les règles actuel du jeux:
-Le but c'est d'avoir le plus de points possible.
+Le but c'est d'avoir le plus de points possible. </br><br>
 Pour obtenir des points il faut avoir une ligne de 3 carte révélé qui vaux un certain nombre de points.
 Ces lignes peuvent être verticale, horizontale ou diagonale.
 3 Cartes de la même couleur (rouge ou noir) === 1 point.
