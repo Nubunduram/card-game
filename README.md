@@ -11,8 +11,10 @@ Ces lignes peuvent être verticale, horizontale ou diagonale.
 ## Le jeux se passe actuellement en 3 phases:
 Phase 1:
 - Retourne 3 carte pas carré
+  
 Phase 2:
 - Possibilité d'échanger 1 seule carte face caché avec 1 seule carte face visible, peut importe ou entre les carré et tout
+
 Phase 3:
 - Retourne 3 carte au total, peu importe ou
 
