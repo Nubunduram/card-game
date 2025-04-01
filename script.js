@@ -1,46 +1,37 @@
+import { distributeCards } from "./modules/deck.js";
+
 document.addEventListener("DOMContentLoaded", () => {
+    // DOM
     const visibleCardContainer = document.getElementById("off-card");
     const gameBoard = document.getElementById("game-board");
     const startButton = document.getElementById("start-game");
     const reglesDuJeu = document.getElementById("regles-du-jeu");
-    const nextPhaseButton = document.getElementById("next-phase"); // Bouton pour passer à la phase 3
-    let deck = [];
+    const nextPhaseButton = document.getElementById("next-phase");
+
+    const phases = [
+        {
+            phase: 1,
+            instructions: "Phase 1 : Retournez 3 cartes dans chaque carré.",
+            showNextButton: false
+        },
+        {
+            phase: 2,
+            instructions: "Phase 2 (optionnel) : Sélectionnez une carte visible et une carte cachée pour échanger leurs positions.",
+            showNextButton: true
+        },
+        {
+            phase: 3,
+            instructions: "Découvrez 3 nouvelles cartes.",
+            showNextButton: false
+        }
+    ];
+
     let boardSquares = [[], [], []];
-    let visibleCard = null;
-    const suits = ["♥", "♦", "♠", "♣"];
     let phase = 1; // Phase actuelle
     let revealedCount = [0, 0, 0]; // Nombre de cartes révélées par carré
     let selectedVisibleCard = null; // Carte face visible sélectionnée
     let selectedHiddenCard = null; // Carte face cachée sélectionnée
     let revealedCountPhase3 = 0;
-
-    // Générer un deck de cartes
-    function generateDeck() {
-        deck = [];
-        for (let i = 1; i <= 7; i++) {
-            suits.forEach(suit => {
-                const color = (suit === "♥" || suit === "♦") ? "red" : "black";
-                deck.push({ number: i, suit, color, revealed: false });
-            });
-        }
-        deck = shuffle(deck);
-    }
-
-    // Mélanger le deck
-    function shuffle(array) {
-        return array.sort(() => Math.random() - 0.5);
-    }
-
-    // Distribuer les cartes : 1 carte visible + 3 carrés de 9 cartes cachées
-    function distributeCards() {
-        visibleCard = deck.pop();
-        boardSquares = [
-            deck.splice(0, 9),
-            deck.splice(0, 9),
-            deck.splice(0, 9)
-        ];
-
-    }
 
     // Démarrer la partie
     function startGame() {
@@ -50,33 +41,17 @@ document.addEventListener("DOMContentLoaded", () => {
         revealedCountPhase3 = 0;
         selectedVisibleCard = null;
         selectedHiddenCard = null;
-
-        // Clear UI
-        gameBoard.innerHTML = "";
         visibleCardContainer.innerHTML = "";
-        reglesDuJeu.textContent = "";
 
-        // Reset deck and distribute cards
-        generateDeck();
-        distributeCards();
-
-        // Render the new board
-        renderBoard();
+        // Set New Cards
+        boardSquares = distributeCards(visibleCardContainer);
 
         // Start phase 1
-        startPhase1();
+        startPhase(1);
     }
 
-    // Afficher la carte visible et les 3 carrés de 3x3 cartes cachées
     function renderBoard() {
         gameBoard.innerHTML = "";
-        visibleCardContainer.innerHTML = "";
-
-        const visibleCardElement = document.createElement("div");
-        visibleCardElement.classList.add("card");
-        visibleCardElement.textContent = `${visibleCard.number} ${visibleCard.suit}`;
-        if (visibleCard.color === "red") visibleCardElement.classList.add("red");
-        visibleCardContainer.appendChild(visibleCardElement);
 
         boardSquares.forEach((square, squareIndex) => {
             const squareContainer = document.createElement("div");
@@ -99,17 +74,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 cardElement.dataset.square = squareIndex;
                 cardElement.dataset.index = cardIndex;
 
-                // Laisser l'événement de révélation actif pendant la phase 1
+                // Phase 1
                 if (phase === 1) {
                     cardElement.addEventListener("click", () => revealCardPhase1(squareIndex, cardIndex, cardElement));
                 }
 
-                // L'ajout de la possibilité de sélectionner dans la phase 2
+                // Phase 2
                 if (phase === 2) {
                     cardElement.addEventListener("click", () => selectCard(squareIndex, cardIndex, cardElement));
                 }
 
-
+                // Phase 3
                 if (phase === 3) {
                     cardElement.addEventListener("click", () => revealCardPhase3(squareIndex, cardIndex, cardElement));
                 }
@@ -123,8 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Révéler une carte (fonction appelée pendant la phase 1)
     function revealCardPhase1(squareIndex, cardIndex, element) {
-        if (phase !== 1) return; // Ne permettre de révéler que pendant la phase 1 & 3
+
+        if (phase !== 1) return;
+
         const card = boardSquares[squareIndex][cardIndex];
+
         if (!card.revealed && revealedCount[squareIndex] < 3) {
             card.revealed = true;
             element.textContent = `${card.number} ${card.suit}`;
@@ -161,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function checkPhase1Completion() {
         if (revealedCount.every(count => count === 3)) {
             reglesDuJeu.textContent = "Phase 1 terminée ! Passons à la phase 2.";
-            startPhase2(); // Passer automatiquement à la phase 2
+            startPhase(2);
         }
     }
 
@@ -201,47 +179,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Démarrer la phase 1
-    function startPhase1() {
-        phase = 1;
-        revealedCount = [0, 0, 0]; // Réinitialiser le nombre de cartes révélées
-        reglesDuJeu.textContent = "Phase 1 : Retournez 3 cartes dans chaque carré.";
-        nextPhaseButton.style.display = "none"; // Cacher le bouton de passage à la phase 3 pendant la phase 1
-    }
+    function startPhase(phaseNumber) {
+        const currentPhase = phases.find(p => p.phase === phaseNumber);
 
-    // Démarrer la phase 2
-    function startPhase2() {
-        nextPhaseButton.style.display = "inline-block";
-        phase = 2;
-        reglesDuJeu.textContent = "Phase 2 (optionnel) : Sélectionnez une carte visible et une carte cachée pour échanger leurs positions.";
-        renderBoard(); // Re-rendre le tableau pour réinitialiser les événements et l'affichage
-    }
+        phase = currentPhase.phase;
+        reglesDuJeu.textContent = currentPhase.instructions;
 
-    // Passer à la phase suivante (Phase 3)
-    function startPhase3() {
-        nextPhaseButton.style.display = "none"; // Cacher le bouton de passage à la phase 3 pendant la phase 2
+        nextPhaseButton.style.display = currentPhase.showNextButton ? "inline-block" : "none";
 
-        if (selectedVisibleCard && selectedHiddenCard) {
-            // Si les cartes ont été sélectionnées, échanger les cartes sélectionnées
-            const { squareIndex: visibleSquare, cardIndex: visibleIndex } = selectedVisibleCard;
-            const { squareIndex: hiddenSquare, cardIndex: hiddenIndex } = selectedHiddenCard;
-
-            // Échanger les cartes
-            const temp = boardSquares[visibleSquare][visibleIndex];
-            boardSquares[visibleSquare][visibleIndex] = boardSquares[hiddenSquare][hiddenIndex];
-            boardSquares[hiddenSquare][hiddenIndex] = temp;
-
-
-
-            // Réinitialiser la sélection
-            selectedVisibleCard = null;
-            selectedHiddenCard = null;
+        // Gestion de l'échange de cartes en phase 3
+        if (phase === 3 && selectedVisibleCard && selectedHiddenCard) {
+            swapCards();
         }
 
-        phase = 3;
-        reglesDuJeu.textContent = " Découvrez 3 nouvelles cartes.";
-        nextPhaseButton.style.display = "none"; // Cacher le bouton pour passer à la phase 3
         renderBoard();
+    }
+
+    // Fonction pour échanger les cartes
+    function swapCards() {
+        const { squareIndex: visibleSquare, cardIndex: visibleIndex } = selectedVisibleCard;
+        const { squareIndex: hiddenSquare, cardIndex: hiddenIndex } = selectedHiddenCard;
+
+        [boardSquares[visibleSquare][visibleIndex], boardSquares[hiddenSquare][hiddenIndex]] =
+            [boardSquares[hiddenSquare][hiddenIndex], boardSquares[visibleSquare][visibleIndex]];
+
+        selectedVisibleCard = null;
+        selectedHiddenCard = null;
     }
 
     // Fonction pour vérifier les résultats à la fin du jeu
@@ -278,57 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return points;
     }
 
-
-    function test() {
-        const testLine1 = [
-            { number: 5, suit: "♥", color: "red", revealed: true },
-            { number: 5, suit: "♦", color: "red", revealed: true },
-            { number: 5, suit: "♠", color: "black", revealed: true }
-        ];
-        const testLine2 = [
-            { number: 1, suit: "♥", color: "red", revealed: true },
-            { number: 2, suit: "♥", color: "red", revealed: true },
-            { number: 3, suit: "♥", color: "red", revealed: true }
-        ];
-        const testLine3 = [
-            { number: 1, suit: "♥", color: "red", revealed: true },
-            { number: 2, suit: "♦", color: "red", revealed: true },
-            { number: 3, suit: "♦", color: "red", revealed: true }
-        ];
-        const testLine4 = [
-            { number: 1, suit: "♠", color: "black", revealed: true },
-            { number: 2, suit: "♠", color: "black", revealed: true },
-            { number: 3, suit: "♣", color: "black", revealed: true }
-        ];
-        const testLine5 = [
-            { number: 1, suit: "♠", color: "black", revealed: true },
-            { number: 2, suit: "♠", color: "black", revealed: true },
-            { number: 3, suit: "♦", color: "red", revealed: true }
-        ];
-        const testLine6 = [
-            { number: 1, suit: "♥", color: "red", revealed: true },
-            { number: 2, suit: "♦", color: "red", revealed: true },
-            { number: 3, suit: "♦", color: "red", revealed: true }
-        ];
-        const testLine7 = [
-            { number: 5, suit: "♦", color: "red", revealed: true },
-            { number: 5, suit: "♦", color: "red", revealed: true },
-            { number: 5, suit: "♦", color: "red", revealed: false }
-        ];
-
-        console.log(checkLine(testLine1) + " should be 5"); // Debug this manually
-        console.log(checkLine(testLine2) + " should be 3"); // Debug this manually
-        console.log(checkLine(testLine3) + " should be 1"); // Debug this manually
-        console.log(checkLine(testLine4) + " should be 1"); // Debug this manually
-        console.log(checkLine(testLine5) + " should be 0"); // Debug this manually
-        console.log(checkLine(testLine6) + " should be 1"); // Debug this manually
-        console.log(checkLine(testLine7) + " should be 0"); // Debug this manually
-
-    }
-    test()
     // Démarrer le jeu
-    startButton.addEventListener("click", startGame);
-
-    // Passer à la phase suivante (Phase 3)
-    nextPhaseButton.addEventListener("click", startPhase3);
+    startButton.addEventListener("click", () => startGame());
+    nextPhaseButton.addEventListener("click", () => startPhase(3));
 });

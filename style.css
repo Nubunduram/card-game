@@ -40,7 +40,8 @@ button:hover {
     gap: 8px;
 }
 
-.square .card, button {
+.square .card,
+button {
     cursor: pointer;
 }
 
