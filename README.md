@@ -1,4 +1,4 @@
-### index.html --> Open with live server
+index.html --> Open with live server
 
 ## Les règles actuel du jeux:
 Le but c'est d'avoir le plus de points possible.
