@@ -11,10 +11,13 @@ function checkLine(cards) {
 }
 
 // Fonction pour vérifier les résultats à la fin du jeu
-export function checkResults(gameState, reglesDuJeuElement) {
+export function checkResults(gameState, gameElements) {
+    gameState.phase = 4;
+
     let totalPoints = 0;
 
     gameState.boardSquares.forEach(square => {
+
         const lines = [
             // Lignes
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -28,7 +31,7 @@ export function checkResults(gameState, reglesDuJeuElement) {
     });
 
     // Affichage du résultat
-    reglesDuJeuElement.textContent = totalPoints > 0
+    gameElements.reglesDuJeu.textContent = totalPoints > 0
         ? `Vous avez gagné avec ${totalPoints} points !`
         : "Aucune ligne valide, vous avez perdu.";
 }

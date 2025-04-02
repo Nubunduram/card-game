@@ -1,9 +1,3 @@
-export const visibleCardContainer = document.getElementById("off-card");
-export const gameBoard = document.getElementById("game-board");
-export const startButton = document.getElementById("start-game");
-export const reglesDuJeu = document.getElementById("regles-du-jeu");
-export const nextPhaseButton = document.getElementById("next-phase");
-
 export const phases = [
     {
         phase: 1,
@@ -19,5 +13,18 @@ export const phases = [
         phase: 3,
         instructions: "Découvrez 3 nouvelles cartes.",
         showNextButton: false
+    },
+    {
+        phase: 4,
+        instructions: "",
+        showNextButton: false
     }
 ];
+
+export const gameElements = {
+    visibleCardContainer: document.getElementById("off-card"),
+    gameBoard: document.getElementById("game-board"),
+    startButton: document.getElementById("start-game"),
+    reglesDuJeu: document.getElementById("regles-du-jeu"),
+    nextPhaseButton: document.getElementById("next-phase")
+}
