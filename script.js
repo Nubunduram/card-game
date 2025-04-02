@@ -1,37 +1,15 @@
 import { distributeCards } from "./modules/deck.js";
+import { checkResults } from "./modules/checkResults.js";
+import { visibleCardContainer, gameBoard, startButton, reglesDuJeu, nextPhaseButton, phases } from "./modules/constantes.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // DOM
-    const visibleCardContainer = document.getElementById("off-card");
-    const gameBoard = document.getElementById("game-board");
-    const startButton = document.getElementById("start-game");
-    const reglesDuJeu = document.getElementById("regles-du-jeu");
-    const nextPhaseButton = document.getElementById("next-phase");
-
-    const phases = [
-        {
-            phase: 1,
-            instructions: "Phase 1 : Retournez 3 cartes dans chaque carré.",
-            showNextButton: false
-        },
-        {
-            phase: 2,
-            instructions: "Phase 2 (optionnel) : Sélectionnez une carte visible et une carte cachée pour échanger leurs positions.",
-            showNextButton: true
-        },
-        {
-            phase: 3,
-            instructions: "Découvrez 3 nouvelles cartes.",
-            showNextButton: false
-        }
-    ];
 
     let boardSquares = [[], [], []];
-    let phase = 1; // Phase actuelle
-    let revealedCount = [0, 0, 0]; // Nombre de cartes révélées par carré
-    let selectedVisibleCard = null; // Carte face visible sélectionnée
-    let selectedHiddenCard = null; // Carte face cachée sélectionnée
-    let revealedCountPhase3 = 0;
+    let phase = 1;
+    let revealedCount = [0, 0, 0]; // Nombre de cartes révélées par carré dans la phase 1
+    let revealedCountPhase3 = 0; // Nombre de cartes révélées dans la phase 3
+    let selectedVisibleCard = null; // Carte face visible sélectionnée pour échange
+    let selectedHiddenCard = null; // Carte face cachée sélectionnée pour échange
 
     // Démarrer la partie
     function startGame() {
@@ -145,38 +123,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function checkPhase3Completion() {
         if (revealedCountPhase3 >= 3) {
-            reglesDuJeu.textContent = "Phase 3 terminée ! Vérifions les résultats";
-            checkResults();
+            checkResults(boardSquares, reglesDuJeu);
         }
     }
 
     // Sélectionner une carte pour l'échange (phase 2)
     function selectCard(squareIndex, cardIndex, element) {
-        if (phase !== 2) return; // Ne permettre de sélectionner que pendant la phase 2
+        if (phase !== 2) return;
 
         const card = boardSquares[squareIndex][cardIndex];
+        unselectCard(card);
+        element.classList.add("selected");
 
-        const allCards = gameBoard.querySelectorAll(".card");
-        allCards.forEach(cardElement => {
-            if (cardElement.classList.contains("hidden") && !card.revealed) {
-                cardElement.classList.remove("selected");
-            } else if (!cardElement.classList.contains("hidden") && card.revealed) {
-                cardElement.classList.remove("selected");
-            }
-        });
+        const cardPosition = { squareIndex, cardIndex, element };
 
-        // Si c'est la première carte visible sélectionnée
         if (card.revealed) {
-            selectedVisibleCard = { squareIndex, cardIndex, element };
-            element.classList.add("selected");
+            selectedVisibleCard = cardPosition;
             reglesDuJeu.textContent = "Carte face visible sélectionnée. Sélectionnez une carte face cachée.";
-        }
-        // Si une carte cachée est sélectionnée
-        else if (!card.revealed) {
-            selectedHiddenCard = { squareIndex, cardIndex, element };
-            element.classList.add("selected");
+        } else {
+            selectedHiddenCard = cardPosition;
             reglesDuJeu.textContent = "Carte face cachée sélectionnée. Cliquez sur 'Passer à la phase 3' pour échanger.";
         }
+    }
+
+    // Unselect the card previously selected when selecting another
+    function unselectCard(card) {
+
+        const allCards = gameBoard.querySelectorAll(".card");
+
+        allCards.forEach(cardElement =>
+            ((cardElement.classList.contains("hidden") !== card.revealed) ? cardElement.classList.remove("selected") : null)
+        );
+
     }
 
     function startPhase(phaseNumber) {
@@ -188,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPhaseButton.style.display = currentPhase.showNextButton ? "inline-block" : "none";
 
         // Gestion de l'échange de cartes en phase 3
-        if (phase === 3 && selectedVisibleCard && selectedHiddenCard) {
+        if (phase === 3) {
             swapCards();
         }
 
@@ -197,51 +175,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Fonction pour échanger les cartes
     function swapCards() {
-        const { squareIndex: visibleSquare, cardIndex: visibleIndex } = selectedVisibleCard;
-        const { squareIndex: hiddenSquare, cardIndex: hiddenIndex } = selectedHiddenCard;
+        if (selectedVisibleCard && selectedHiddenCard) {
+            const { squareIndex: visibleSquare, cardIndex: visibleIndex } = selectedVisibleCard;
+            const { squareIndex: hiddenSquare, cardIndex: hiddenIndex } = selectedHiddenCard;
 
-        [boardSquares[visibleSquare][visibleIndex], boardSquares[hiddenSquare][hiddenIndex]] =
-            [boardSquares[hiddenSquare][hiddenIndex], boardSquares[visibleSquare][visibleIndex]];
+            [boardSquares[visibleSquare][visibleIndex], boardSquares[hiddenSquare][hiddenIndex]] =
+                [boardSquares[hiddenSquare][hiddenIndex], boardSquares[visibleSquare][visibleIndex]];
 
-        selectedVisibleCard = null;
-        selectedHiddenCard = null;
+            selectedVisibleCard = null;
+            selectedHiddenCard = null;
+        }
     }
 
-    // Fonction pour vérifier les résultats à la fin du jeu
-    function checkResults() {
-        let totalPoints = 0;
-
-        boardSquares.forEach(square => {
-            const lines = [
-                // Lignes
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                // Colonnes
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                // Diagonales
-                [0, 4, 8], [2, 4, 6]
-            ];
-
-            totalPoints += lines.reduce((sum, indices) => sum + checkLine(indices.map(i => square[i])), 0);
-        });
-
-        // Affichage du résultat
-        reglesDuJeu.textContent = totalPoints > 0
-            ? `Vous avez gagné avec ${totalPoints} points !`
-            : "Aucune ligne valide, vous avez perdu.";
-    }
-
-    // Fonction pour vérifier une ligne (horizontale, verticale, ou diagonale)
-    function checkLine(cards) {
-        if (cards.some(card => !card.revealed)) return 0; // Ne pas compter si une carte est cachée
-
-        const [colors, numbers, suits] = ['color', 'number', 'suit'].map(attr => new Set(cards.map(card => card[attr])));
-
-        let points = (suits.size === 1 ? 3 : colors.size === 1 ? 1 : 0) + (numbers.size === 1 ? 5 : 0);
-
-        return points;
-    }
-
-    // Démarrer le jeu
     startButton.addEventListener("click", () => startGame());
     nextPhaseButton.addEventListener("click", () => startPhase(3));
 });
