@@ -11,10 +11,10 @@ function checkLine(cards) {
 }
 
 // Fonction pour vérifier les résultats à la fin du jeu
-export function checkResults(boardSquares, reglesDuJeuElement) {
+export function checkResults(gameState, reglesDuJeuElement) {
     let totalPoints = 0;
 
-    boardSquares.forEach(square => {
+    gameState.boardSquares.forEach(square => {
         const lines = [
             // Lignes
             [0, 1, 2], [3, 4, 5], [6, 7, 8],

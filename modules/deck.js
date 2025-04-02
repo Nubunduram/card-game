@@ -20,6 +20,8 @@ function shuffle(deck) {
 }
 
 function createVisibleCardElement(visibleCard, container) {
+    container.innerHTML = "";
+
     const visibleCardElement = document.createElement("div");
     visibleCardElement.classList.add("card");
     visibleCardElement.textContent = `${visibleCard.number} ${visibleCard.suit}`;
