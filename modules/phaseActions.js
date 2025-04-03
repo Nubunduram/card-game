@@ -25,9 +25,17 @@ function revealCard(gameState, cardElement) {
     if (gameState.phase === 3) {
         gameState.revealedCountPhase3 = revealIfNeeded(cardElement, gameState.revealedCountPhase3);
     }
+
+    if (gameState.phase === 6) {
+
+        if (!card.revealed && gameState.bonusRoundAvailable > gameState.bonusRoundDone) {
+            revealCardElement(cardElement);
+            gameState.bonusRoundDone += 1;
+        }
+    }
 }
 
-// Select cards for Swap (Phase 2)
+// Select cards for Swap (Phase 2 & 5)
 
 function deselectPreviousSelection(gameState, isRevealed) {
     gameState.boardSquares.forEach(square => {
@@ -78,13 +86,19 @@ function selectCard(gameState, gameElements, cardElement) {
 export function setPhaseAction(gameState, cardElement, gameElements) {
     switch (gameState.phase) {
         case 1:
-            revealCard(gameState, cardElement)
+            revealCard(gameState, cardElement);
             break;
         case 2:
             selectCard(gameState, gameElements, cardElement);
             break;
         case 3:
-            revealCard(gameState, cardElement)
+            revealCard(gameState, cardElement);
             break;
+        case 5:
+            selectCard(gameState, gameElements, cardElement);
+            break
+        case 6:
+            revealCard(gameState, cardElement);
+            break
     }
 }

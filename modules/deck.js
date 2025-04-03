@@ -1,7 +1,6 @@
-const suits = ["♥", "♦", "♠", "♣"];
-
 function generateDeck() {
-
+    const suits = ["♥", "♦", "♠", "♣"];
+    
     return suits.flatMap(suit => {
 
         const color = (suit === "♥" || suit === "♦") ? "red" : "black";

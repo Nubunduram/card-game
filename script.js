@@ -1,6 +1,5 @@
 import { distributeCards } from "./modules/deck.js";
 import { initGameState, gameElements, phases } from "./modules/constantes.js";
-
 import { setPhaseAction } from "./modules/phaseActions.js";
 import { createSquareContainer } from "./modules/utils.js";
 import { swapCards, checkResults } from "./modules/events.js";
@@ -66,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function checkForNextPhase(gameState) {
+
         if (gameState.phase === 1 && gameState.revealedCount.every(count => count === 3)) {
             gameState.revealedCount = [0, 0, 0];
             startPhase(gameState, 2, gameElements);
@@ -74,20 +74,38 @@ document.addEventListener("DOMContentLoaded", () => {
         if (gameState.phase === 2) {
             gameElements.nextPhaseButton.addEventListener("click", () => {
                 startPhase(gameState, 3, gameElements);
-                swapCards(gameState)
+                swapCards(gameState);
             });
         }
 
         if (gameState.phase === 3 && gameState.revealedCountPhase3 === 3) {
             gameState.revealCardPhase3 = 0;
+            startPhase(gameState, 4, gameElements);
             checkResults(gameState, gameElements);
+        }
+
+        if (gameState.phase === 4 && gameState.bonusRoundAvailable > gameState.bonusRoundDone) {
+            startPhase(gameState, 5, gameElements)
+        }
+
+        if (gameState.phase === 5) {
+            gameElements.nextPhaseButton.addEventListener("click", () => {
+                startPhase(gameState, 6, gameElements);
+                swapCards(gameState);
+            });
+        }
+
+        if (gameState.phase === 6 && gameState.bonusRoundDone > 0) {
+            checkResults(gameState, gameElements)
+            if (gameState.bonusRoundAvailable > gameState.bonusRoundDone) {
+                startPhase(gameState, 5, gameElements)
+            }
         }
     }
 
     function startGame() {
         const gameState = initGameState();
         gameState.boardSquares = distributeCards(gameElements);
-
         startPhase(gameState, 1, gameElements);
     }
 

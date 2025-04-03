@@ -16,7 +16,17 @@ export const phases = [
     },
     {
         phase: 4,
-        instructions: "",
+        instructions: "Vlà la phose quotre lô",
+        showNextPhaseButton: false
+    },
+    {
+        phase: 5,
+        instructions: "Phase Bonus (optionnel) : Sélectionnez une carte visible et une carte cachée pour échanger leurs positions.",
+        showNextPhaseButton: true
+    },
+    {
+        phase: 6,
+        instructions: "Phase Bonus : Révelez 1 nouvelle carte.",
         showNextPhaseButton: false
     }
 ];
@@ -35,5 +45,7 @@ export function initGameState() {
         phase: 1,
         revealedCount: [0, 0, 0],
         revealedCountPhase3: 0,
+        bonusRoundAvailable: 0,
+        bonusRoundDone: 0,
     };
 }

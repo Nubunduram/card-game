@@ -18,7 +18,7 @@ Phase 2:
 Phase 3:
 - Retourne 3 carte au total, peu importe ou
 
-## Pas encore mis en place:
+## Entrain d'être mis en place:
 3 Cartes du même chiffre === 5 points + Phase Bonus (répétable)<br>
 3 Cartes du même chiffre que la carte au dessus = On retourne toute les cartes
 
