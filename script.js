@@ -1,9 +1,10 @@
 import { distributeCards } from "./modules/deck.js";
-import { gameElements, phases } from "./modules/constantes.js";
-import { createGameState } from "./modules/gameState.js";
+import { initGameState, gameElements, phases } from "./modules/constantes.js";
 
-import { checkResults } from "./modules/checkResults.js";
-import { swapCards, selectCard, createSquareContainer } from "./modules/utils.js";
+import { setPhaseAction } from "./modules/phaseActions.js";
+import { createSquareContainer } from "./modules/utils.js";
+import { swapCards, checkResults } from "./modules/events.js";
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -14,30 +15,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Adapt rules
         gameElements.reglesDuJeu.textContent = currentPhase.instructions;
-        gameElements.nextPhaseButton.style.display = currentPhase.showNextButton ? "inline-block" : "none";
+        gameElements.nextPhaseButton.style.display = currentPhase.showNextPhaseButton ? "inline-block" : "none";
 
-        if (gameState.phase === 2) {
-            gameElements.nextPhaseButton.addEventListener("click", () => startPhase(gameState, 3, gameElements));
-        }
-
-        if (gameState.phase === 3) {
-            swapCards(gameState);
-        }
-
-        renderBoard(gameState, phaseNumber);
+        renderBoard(gameState, gameElements);
     }
 
-    function renderBoard(gameState) {
+    function renderBoard(gameState, gameElements) {
         // Reset Board
         gameElements.gameBoard.innerHTML = "";
 
         gameState.boardSquares.forEach((square) => {
 
             const squareContainer = createSquareContainer();
-
             // Fill the squares with cards
-            square.forEach((card) => {
-                const cardElement = createCardElement(gameState, card);
+            square.forEach((cardData) => {
+                const cardElement = createCardElement(gameState, cardData);
                 squareContainer.appendChild(cardElement);
             });
 
@@ -46,12 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function createCardElement(gameState, card) {
+    function createCardElement(gameState, cardData) {
         const cardElement = document.createElement("div");
 
         cardElement.classList.add("card");
 
-        cardElement.card = card;
+        cardElement.data = cardData;
+        const card = cardElement.data;
 
         if (card.revealed) {
             cardElement.textContent = `${card.number} ${card.suit}`;
@@ -67,61 +60,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function addCardEventListener(gameState, cardElement) {
         cardElement.addEventListener("click", () => {
-            const card = cardElement.card; // Access the card directly from the element
-
-            switch (gameState.phase) {
-                case 1:
-                    revealCardPhase1(gameState, cardElement, card);
-                    break;
-                case 2:
-                    selectCard(gameState, gameElements, card);
-                    break;
-                case 3:
-                    revealCardPhase3(gameState, cardElement, card);
-                    break;
-            }
+            setPhaseAction(gameState, cardElement, gameElements);
+            checkForNextPhase(gameState);
         });
     }
 
-    function updateCardDisplay(card, cardElement) {
-        card.revealed = true;
-        cardElement.textContent = `${card.number} ${card.suit}`;
-        cardElement.classList.remove("hidden");
-        if (card.color === "red") cardElement.classList.add("red");
-    }
-
-    function revealCardPhase1(gameState, cardElement, card) {
-
-        if (!card.revealed && gameState.revealedCount[card.squareIndex] < 3) {
-            updateCardDisplay(card, cardElement);
-            gameState.revealedCount[card.squareIndex]++;
+    function checkForNextPhase(gameState) {
+        if (gameState.phase === 1 && gameState.revealedCount.every(count => count === 3)) {
+            gameState.revealedCount = [0, 0, 0];
+            startPhase(gameState, 2, gameElements);
         }
 
-        if (gameState.revealedCount[card.squareIndex] === 3) {
-            gameElements.reglesDuJeu.textContent = `Carré ${card.squareIndex + 1} complété.`;
+        if (gameState.phase === 2) {
+            gameElements.nextPhaseButton.addEventListener("click", () => {
+                startPhase(gameState, 3, gameElements);
+                swapCards(gameState)
+            });
+        }
 
-            if (gameState.revealedCount.every(count => count === 3)) {
-                startPhase(gameState, 2, gameElements);
-            }
+        if (gameState.phase === 3 && gameState.revealedCountPhase3 === 3) {
+            gameState.revealCardPhase3 = 0;
+            checkResults(gameState, gameElements);
         }
     }
-
-    function revealCardPhase3(gameState, cardElement, card) {
-        // const { card } = getCardDetails(gameState, cardElement);
-
-        if (!card.revealed) {
-            updateCardDisplay(card, cardElement);
-            gameState.revealedCountPhase3++;
-
-            if (gameState.revealedCountPhase3 === 3) {
-                checkResults(gameState, gameElements);
-            }
-        }
-    }
-
 
     function startGame() {
-        const gameState = createGameState();
+        const gameState = initGameState();
         gameState.boardSquares = distributeCards(gameElements);
 
         startPhase(gameState, 1, gameElements);

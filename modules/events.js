@@ -1,4 +1,39 @@
-// Fonction pour vérifier une ligne (horizontale, verticale, ou diagonale)
+// Swap Cards at Start of Phase 3
+
+function getSelectedCards(gameState) {
+    let selectedCards = [];
+
+    gameState.boardSquares.forEach(square => {
+        square.forEach(card => {
+            if (card.selected) {
+                selectedCards.push(card);
+            }
+        });
+    });
+
+    return selectedCards
+}
+
+export function swapCards(gameState) {
+    // Find the two selected cards
+    const selectedCards = getSelectedCards(gameState);
+
+    // If exactly two cards are selected, swap their positions
+    if (selectedCards.length === 2) {
+        const [selectedCard1, selectedCard2] = selectedCards;
+
+        // Update boardSquares data with swapped indices
+        gameState.boardSquares[selectedCard1.squareIndex][selectedCard1.index] = selectedCard2;
+        gameState.boardSquares[selectedCard2.squareIndex][selectedCard2.index] = selectedCard1;
+
+        // Deselect the swapped cards
+        gameState.boardSquares[selectedCard1.squareIndex][selectedCard1.index].selected = false;
+        gameState.boardSquares[selectedCard2.squareIndex][selectedCard2.index].selected = false;
+    }
+}
+
+// Check board Results
+
 function checkLine(cards) {
     if (cards.some(card => !card.revealed)) return 0; // Ne pas compter si une carte est cachée
 
@@ -10,7 +45,6 @@ function checkLine(cards) {
     return points;
 }
 
-// Fonction pour vérifier les résultats à la fin du jeu
 export function checkResults(gameState, gameElements) {
     gameState.phase = 4;
 
