@@ -1,9 +1,22 @@
 const suits = ["♥", "♦", "♠", "♣"];
 
 function generateDeck() {
+
     return suits.flatMap(suit => {
+
         const color = (suit === "♥" || suit === "♦") ? "red" : "black";
-        return Array.from({ length: 7 }, (_, i) => ({ number: i + 1, suit, color, revealed: false }));
+
+        return Array.from({ length: 7 }, (_, i) => {
+            return {
+                number: i + 1,
+                suit,
+                color,
+                revealed: false,
+                selected: false,
+                index: null,
+                squareIndex: null,
+            };
+        });
     });
 }
 
@@ -28,8 +41,8 @@ export function distributeCards(gameElements) {
     gameElements.visibleCardContainer.appendChild(createVisibleCardElement(visibleCard));
 
     return [
-        deck.slice(0, 9),
-        deck.slice(9, 18),
-        deck.slice(18, 27)
+        deck.slice(0, 9).map((card, index) => ({ ...card, squareIndex: 0, index })),
+        deck.slice(9, 18).map((card, index) => ({ ...card, squareIndex: 1, index })),
+        deck.slice(18, 27).map((card, index) => ({ ...card, squareIndex: 2, index }))
     ];
 }

@@ -4,7 +4,5 @@ export function createGameState() {
         phase: 1,
         revealedCount: [0, 0, 0],
         revealedCountPhase3: 0,
-        selectedVisibleCard: null,
-        selectedHiddenCard: null,
     };
 }
