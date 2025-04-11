@@ -47,5 +47,6 @@ export function initGameState() {
         revealedCountPhase3: 0,
         bonusRoundAvailable: 0,
         bonusRoundDone: 0,
+        visibleCard: null,
     };
 }

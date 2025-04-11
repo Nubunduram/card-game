@@ -31,10 +31,12 @@ function createVisibleCardElement(visibleCard) {
     return visibleCardElement;
 }
 
-export function distributeCards(gameElements) {
+export function distributeCards(gameElements, gameState) {
 
     const deck = shuffle(generateDeck());
     const visibleCard = deck.pop();
+
+    gameState.visibleCard = visibleCard;
 
     gameElements.visibleCardContainer.innerHTML = "";
     gameElements.visibleCardContainer.appendChild(createVisibleCardElement(visibleCard));
