@@ -31,3 +31,6 @@ Phase 6:
 
 ## A mettre en place:
 3 Cartes du même chiffre que la carte au dessus = On retourne toute les cartes
+
+## Idée Multi-Joueur
+Plusieurs Round d'affilé, une défaite avec 0 points == Instant lose

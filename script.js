@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (gameState.phase === 6 && gameState.bonusRoundDone > 0) {
+        if (gameState.phase === 6) {
             checkResults(gameState, gameElements)
             if (gameState.bonusRoundAvailable > gameState.bonusRoundDone) {
                 startPhase(gameState, 5, gameElements)
@@ -106,6 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function startGame() {
         const gameState = initGameState();
         gameState.boardSquares = distributeCards(gameElements);
+        console.log(gameState.boardSquares)
+
         startPhase(gameState, 1, gameElements);
     }
 

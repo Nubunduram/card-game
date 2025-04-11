@@ -15,22 +15,35 @@ function getSelectedCards(gameState) {
 }
 
 export function swapCards(gameState) {
-    // Find the two selected cards
+    // Récupère les cartes sélectionnées
     const selectedCards = getSelectedCards(gameState);
 
-    // If exactly two cards are selected, swap their positions
+    // Si exactement deux cartes sont sélectionnées, on procède au swap
     if (selectedCards.length === 2) {
         const [selectedCard1, selectedCard2] = selectedCards;
 
-        // Update boardSquares data with swapped indices
-        gameState.boardSquares[selectedCard1.squareIndex][selectedCard1.index] = selectedCard2;
-        gameState.boardSquares[selectedCard2.squareIndex][selectedCard2.index] = selectedCard1;
+        // Enregistre les indices des cartes sélectionnées dans les carrés (squares)
+        const card1SquareIndex = selectedCard1.squareIndex;
+        const card2SquareIndex = selectedCard2.squareIndex;
+        const card1Index = selectedCard1.index;
+        const card2Index = selectedCard2.index;
 
-        // Deselect the swapped cards
-        gameState.boardSquares[selectedCard1.squareIndex][selectedCard1.index].selected = false;
-        gameState.boardSquares[selectedCard2.squareIndex][selectedCard2.index].selected = false;
+        // Échange les cartes dans les carrés (en tenant compte de leurs indices)
+        gameState.boardSquares[card1SquareIndex][card1Index] = selectedCard2;
+        gameState.boardSquares[card2SquareIndex][card2Index] = selectedCard1;
+
+        // Mettez à jour les indices des cartes échangées
+        selectedCard1.squareIndex = card2SquareIndex;
+        selectedCard1.index = card2Index;
+        selectedCard2.squareIndex = card1SquareIndex;
+        selectedCard2.index = card1Index;
+
+        // Dé-sélectionne les cartes après l'échange
+        selectedCard1.selected = false;
+        selectedCard2.selected = false;
     }
 }
+
 
 // Check board Results
 
@@ -69,8 +82,8 @@ export function checkResults(gameState, gameElements) {
         totalPoints += lines.reduce((sum, indices) => sum + checkLine(gameState, indices.map(i => square[i])), 0);
     });
 
-    if (gameState.bonusRoundAvailable === gameState.bonusRoundDone) {
-        // Affichage du résultat
+    if (gameState.bonusRoundAvailable <= gameState.bonusRoundDone) {
+
         gameElements.reglesDuJeu.textContent = totalPoints > 0
             ? `Vous avez gagné avec ${totalPoints} points !`
             : "Aucune ligne valide, vous avez perdu.";
