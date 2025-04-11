@@ -7,6 +7,7 @@ Ces lignes peuvent être verticale, horizontale ou diagonale.<br>
 3 Cartes de la même couleur (rouge ou noir) === 1 point.<br>
 3 Cartes de même types (Coeur, Carreaux, Trèfle, Pique) === 3 points.<br>
 3 Cartes du même chiffre === 5 points + Phase Bonus (répétable).<br>
+3 Cartes du même chiffre que la carte "off game" (la carte visible au dessus) = On retourne toute les cartes et on compte toutes les lignes.<br>
 
 ## Le jeux se passe actuellement en 6 phases:
 Phase 1:
@@ -30,7 +31,11 @@ Phase 6:
 ---> Retour Phase 4
 
 ## A mettre en place:
-3 Cartes du même chiffre que la carte au dessus = On retourne toute les cartes
+    PvP même écran
+    Meilleur Score
+    Animation / Visuel
+    
+    // Créer un back end avec des users, leaderboard, Multi joueur en ligne...
 
 ## Idée Multi-Joueur
 Plusieurs Round d'affilé, une défaite avec 0 points == Instant lose
