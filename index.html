@@ -4,14 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Cartes Solo</title>
+    <title>A Card Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Le jeu de carte</h1>
-    <!-- Paragraphe pour afficher les messages -->
-    <p id="regles-du-jeu">Les règles à suivre s'afficheront ici</p>
+    <header>
+        <h1>A Card Game</h1>
+        <p id="regles-du-jeu">Les règles à suivre s'afficheront ici</p>
+        <div class="buttons-container">
+            <button id="start-game">New Game</button>
+            <button id="next-phase" style="display:none;">Next Phase</button>
+        </div>
+    </header>
+
 
     <div id="off-card">
         <!-- Carte en dehors du jeu -->
@@ -20,9 +26,6 @@
     <div id="game-board" class="grid-container">
         <!-- Trois carrés de 3x3 cartes cachées -->
     </div>
-
-    <button id="start-game">Nouvelle partie</button>
-    <button id="next-phase" style="display:none;">Passer à la phase 3</button>
 
     <script src="script.js" type="module"></script>
 </body>

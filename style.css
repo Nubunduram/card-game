@@ -8,25 +8,29 @@
 body {
     display: grid;
     place-items: center;
+
     gap: 32px;
-    margin: 32px;
+    margin: 32px auto;
+
+    min-width: 300px;
+    width: max-content;
+    max-width: 90%;
 
     background-color: #1e812e;
     color: white;
 }
 
-.square .card.hidden {
-    background-color: #a94a2f;
+header {
+    display: grid;
+    text-align: center;
+    width: 100%;
 }
 
-button {
-    padding: 8px 16px;
-    background-color: #a94a2f;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: #c0392b;
+.buttons-container {
+    margin-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 #game-board {
@@ -40,9 +44,9 @@ button:hover {
     gap: 8px;
 }
 
-.square .card,
+.card.hidden,
 button {
-    cursor: pointer;
+    background-color: #a94a2f;
 }
 
 .card {
@@ -58,12 +62,35 @@ button {
     font-weight: bold;
 }
 
+.card,
+button {
+    cursor: pointer;
+}
+
+button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: solid 1px black;
+    color: white;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: white;
+    color: #a94a2f;
+}
+
 .red {
     color: rgb(236, 27, 27);
 }
 
-/* Style pour les cartes sélectionnées */
 .card.selected {
-    border: 2px solid #ffb600;
+    border: #ffb600;
     background-color: #ffe600;
+}
+
+@media (max-width: 768px) {
+    #game-board {
+        flex-direction: column;
+    }
 }
