@@ -30,11 +30,15 @@ Phase 6:
 
 ---> Retour Phase 4
 
+## Important a mettre en place:
+    Explications des règles clair / Montrer des examples de bases
+    Calcul des points & tours bonus après chaque actions + Display les tours bonus remaining & les points actuel.
+    Ajouter une animation qui montre la nouvelle ligne sur lesquels ont fait des points + une animation "+X points +1 Bonus tour !"
+    Animation / Visuel
+    Affiché un Meilleur score via Cookies
+
 ## A mettre en place:
     PvP même écran
-    Meilleur Score
-    Animation / Visuel
-    
     // Créer un back end avec des users, leaderboard, Multi joueur en ligne...
 
 ## Idée Multi-Joueur

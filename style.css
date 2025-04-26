@@ -54,7 +54,7 @@ button {
     height: 80px;
     display: grid;
     place-content: center;
-    border: 1px solid #000;
+    border: 2px solid #000;
     background-color: white;
     border-radius: 7px;
     color: black;
@@ -85,7 +85,7 @@ button:hover {
 }
 
 .card.selected {
-    border: #ffb600;
+    border-color: red;
     background-color: #ffe600;
 }
 
